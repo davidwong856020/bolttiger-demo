@@ -357,13 +357,36 @@ body {
 /* ============================================
    SCROLL PERFORMANCE OPTIMIZATION
    ============================================ */
-body.scrolling .luxury-bg,
-body.scrolling .luxury-bg * {
+body.scrolling .luxury-bg {
   animation-play-state: paused !important;
+  will-change: auto;
 }
 
-body.scrolling #dustCanvas {
-  opacity: 0.3;
+body.scrolling .luxury-bg * {
+  animation-play-state: paused !important;
+  will-change: auto;
+}
+
+body.scrolling #dustCanvas,
+body.scrolling .golden-flakes {
+  visibility: hidden;
+}
+
+body.scrolling .sun-glow,
+body.scrolling .soft-beam,
+body.scrolling .haze-layer,
+body.scrolling .light-orb {
+  opacity: 0.5;
+  filter: none !important;
+}
+
+/* 全局性能优化 */
+main {
+  contain: layout style;
+}
+
+.page {
+  contain: layout style paint;
 }
 
 /* ============================================
@@ -401,7 +424,7 @@ body.scrolling #dustCanvas {
     rgba(200, 120, 40, 0.03) 60%,
     transparent 80%
   );
-  filter: blur(40px);
+  filter: blur(25px);
   animation: sunPulse 8s ease-in-out infinite;
   will-change: opacity, transform;
 }
@@ -440,9 +463,9 @@ body.scrolling #dustCanvas {
     rgba(245, 166, 35, 0.04) 50%,
     transparent 100%
   );
-  filter: blur(30px);
+  filter: blur(20px);
   animation: beamBreath 10s ease-in-out infinite;
-  will-change: opacity, filter;
+  will-change: opacity;
 }
 
 .soft-beam.beam-1 {
@@ -503,11 +526,11 @@ body.scrolling #dustCanvas {
     rgba(255, 180, 100, 0.03) 30%,
     transparent 60%
   );
-  filter: blur(60px);
+  filter: blur(35px);
   animation: hazeShift 12s ease-in-out infinite;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: opacity, transform;
+  will-change: opacity;
 }
 
 @keyframes hazeShift {
@@ -635,12 +658,12 @@ body.scrolling #dustCanvas {
 .light-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
+  filter: blur(40px);
   mix-blend-mode: soft-light;
   animation: orbDrift 20s ease-in-out infinite;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 .orb-1 {
@@ -4409,7 +4432,7 @@ function initDustCanvas() {
   window.addEventListener('resize', resize);
   
   const particles = [];
-  const particleCount = 60; // Fewer but softer particles
+  const particleCount = 30; // Reduced for better performance
   
   for (let i = 0; i < particleCount; i++) {
     // Warm golden color variations
@@ -4440,14 +4463,32 @@ function initDustCanvas() {
     });
   }
   
-  function animate() {
+  let lastTime = 0;
+  const targetFPS = 30; // 降低到30帧
+  const frameInterval = 1000 / targetFPS;
+  
+  function animate(currentTime) {
+    requestAnimationFrame(animate);
+    
+    // 滚动时跳过渲染
+    if (document.body.classList.contains('scrolling')) {
+      return;
+    }
+    
+    // 帧率限制
+    const deltaTime = currentTime - lastTime;
+    if (deltaTime < frameInterval) {
+      return;
+    }
+    lastTime = currentTime - (deltaTime % frameInterval);
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     particles.forEach(p => {
       // Gentle floating motion
       p.y += p.speedY;
       p.drift += 0.01;
-      p.x += p.speedX + Math.sin(p.drift) * 0.3; // Gentle swaying
+      p.x += p.speedX + Math.sin(p.drift) * 0.3;
       p.pulse += p.pulseSpeed;
       
       // Reset when off screen
@@ -4473,11 +4514,9 @@ function initDustCanvas() {
       ctx.fillStyle = gradient;
       ctx.fill();
     });
-    
-    requestAnimationFrame(animate);
   }
   
-  animate();
+  requestAnimationFrame(animate);
 }
 
 /* ============================================
