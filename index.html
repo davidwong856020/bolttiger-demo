@@ -329,6 +329,16 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*:focus {
+  outline: none;
+}
+
+button, a, input, select, textarea {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -1189,6 +1199,12 @@ main {
 .cta-btn:hover {
   transform: translateY(-3px);
   box-shadow: var(--glow-gold-strong);
+}
+
+.cta-btn:focus,
+.cta-btn:active {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-particles {
