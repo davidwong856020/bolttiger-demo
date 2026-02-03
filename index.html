@@ -694,11 +694,11 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  background: linear-gradient(180deg, rgba(3, 3, 5, 0.95) 0%, rgba(3, 3, 5, 0.8) 100%);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background: rgba(3, 3, 5, 0.95);
   border-bottom: 1px solid rgba(245, 166, 35, 0.1);
   z-index: 1000;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .logo {
@@ -854,6 +854,8 @@ main {
   padding: 76px 16px 100px;
   max-width: 420px;
   margin: 0 auto;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 /* Page Transition */
@@ -1059,6 +1061,8 @@ main {
   position: relative;
   text-align: center;
   padding: 20px 0 40px;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .hero-decoration {
@@ -1173,6 +1177,8 @@ main {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.4s;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .btn-content {
@@ -4257,12 +4263,12 @@ input[type="number"] {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: linear-gradient(180deg, rgba(3, 3, 5, 0.9) 0%, rgba(3, 3, 5, 0.98) 100%);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background: rgba(3, 3, 5, 0.98);
   border-top: 1px solid rgba(245, 166, 35, 0.1);
   z-index: 1000;
   padding-bottom: env(safe-area-inset-bottom);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .nav-glow {
