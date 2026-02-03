@@ -355,41 +355,6 @@ body {
 }
 
 /* ============================================
-   SCROLL PERFORMANCE OPTIMIZATION
-   ============================================ */
-body.scrolling .luxury-bg {
-  animation-play-state: paused !important;
-  will-change: auto;
-}
-
-body.scrolling .luxury-bg * {
-  animation-play-state: paused !important;
-  will-change: auto;
-}
-
-body.scrolling #dustCanvas,
-body.scrolling .golden-flakes {
-  visibility: hidden;
-}
-
-body.scrolling .sun-glow,
-body.scrolling .soft-beam,
-body.scrolling .haze-layer,
-body.scrolling .light-orb {
-  opacity: 0.5;
-  filter: none !important;
-}
-
-/* 全局性能优化 */
-main {
-  contain: layout style;
-}
-
-.page {
-  contain: layout style paint;
-}
-
-/* ============================================
    LUXURY BACKGROUND - GOLDEN SUNLIGHT EFFECT
    ============================================ */
 .luxury-bg {
@@ -424,7 +389,7 @@ main {
     rgba(200, 120, 40, 0.03) 60%,
     transparent 80%
   );
-  filter: blur(25px);
+  filter: blur(40px);
   animation: sunPulse 8s ease-in-out infinite;
   will-change: opacity, transform;
 }
@@ -463,9 +428,9 @@ main {
     rgba(245, 166, 35, 0.04) 50%,
     transparent 100%
   );
-  filter: blur(20px);
+  filter: blur(30px);
   animation: beamBreath 10s ease-in-out infinite;
-  will-change: opacity;
+  will-change: opacity, filter;
 }
 
 .soft-beam.beam-1 {
@@ -526,11 +491,11 @@ main {
     rgba(255, 180, 100, 0.03) 30%,
     transparent 60%
   );
-  filter: blur(35px);
+  filter: blur(60px);
   animation: hazeShift 12s ease-in-out infinite;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: opacity;
+  will-change: opacity, transform;
 }
 
 @keyframes hazeShift {
@@ -658,12 +623,12 @@ main {
 .light-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(40px);
+  filter: blur(60px);
   mix-blend-mode: soft-light;
   animation: orbDrift 20s ease-in-out infinite;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: opacity;
+  will-change: transform, opacity;
 }
 
 .orb-1 {
@@ -4408,7 +4373,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initDustCanvas();
   initGoldenFlakes();
   initNavigation();
-  initScrollOptimization();
   initLineChart();
   initStats();
   initParticleEffects();
@@ -4432,7 +4396,7 @@ function initDustCanvas() {
   window.addEventListener('resize', resize);
   
   const particles = [];
-  const particleCount = 30; // Reduced for better performance
+  const particleCount = 60; // Fewer but softer particles
   
   for (let i = 0; i < particleCount; i++) {
     // Warm golden color variations
@@ -4463,32 +4427,14 @@ function initDustCanvas() {
     });
   }
   
-  let lastTime = 0;
-  const targetFPS = 30; // 降低到30帧
-  const frameInterval = 1000 / targetFPS;
-  
-  function animate(currentTime) {
-    requestAnimationFrame(animate);
-    
-    // 滚动时跳过渲染
-    if (document.body.classList.contains('scrolling')) {
-      return;
-    }
-    
-    // 帧率限制
-    const deltaTime = currentTime - lastTime;
-    if (deltaTime < frameInterval) {
-      return;
-    }
-    lastTime = currentTime - (deltaTime % frameInterval);
-    
+  function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     particles.forEach(p => {
       // Gentle floating motion
       p.y += p.speedY;
       p.drift += 0.01;
-      p.x += p.speedX + Math.sin(p.drift) * 0.3;
+      p.x += p.speedX + Math.sin(p.drift) * 0.3; // Gentle swaying
       p.pulse += p.pulseSpeed;
       
       // Reset when off screen
@@ -4514,9 +4460,11 @@ function initDustCanvas() {
       ctx.fillStyle = gradient;
       ctx.fill();
     });
+    
+    requestAnimationFrame(animate);
   }
   
-  requestAnimationFrame(animate);
+  animate();
 }
 
 /* ============================================
@@ -4564,50 +4512,6 @@ function initGoldenFlakes() {
    NAVIGATION & PAGE TRANSITIONS
    ============================================ */
 let isTransitioning = false;
-
-/* ============================================
-   SCROLL PERFORMANCE OPTIMIZATION
-   ============================================ */
-function initScrollOptimization() {
-  let scrollTimeout;
-  let isScrolling = false;
-  
-  window.addEventListener('scroll', () => {
-    if (!isScrolling) {
-      document.body.classList.add('scrolling');
-      isScrolling = true;
-    }
-    
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      document.body.classList.remove('scrolling');
-      isScrolling = false;
-    }, 150); // 滚动停止150ms后恢复动画
-  }, { passive: true });
-  
-  // 触摸滑动优化
-  let touchStartY = 0;
-  document.addEventListener('touchstart', (e) => {
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  
-  document.addEventListener('touchmove', (e) => {
-    const touchY = e.touches[0].clientY;
-    const diff = Math.abs(touchY - touchStartY);
-    if (diff > 5 && !isScrolling) {
-      document.body.classList.add('scrolling');
-      isScrolling = true;
-    }
-  }, { passive: true });
-  
-  document.addEventListener('touchend', () => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      document.body.classList.remove('scrolling');
-      isScrolling = false;
-    }, 150);
-  }, { passive: true });
-}
 
 function initNavigation() {
   // 首页单独文件 - 导航暂时禁用
