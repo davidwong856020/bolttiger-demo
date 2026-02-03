@@ -355,6 +355,18 @@ body {
 }
 
 /* ============================================
+   SCROLL PERFORMANCE OPTIMIZATION
+   ============================================ */
+body.scrolling .luxury-bg,
+body.scrolling .luxury-bg * {
+  animation-play-state: paused !important;
+}
+
+body.scrolling #dustCanvas {
+  opacity: 0.3;
+}
+
+/* ============================================
    LUXURY BACKGROUND - GOLDEN SUNLIGHT EFFECT
    ============================================ */
 .luxury-bg {
@@ -4373,6 +4385,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDustCanvas();
   initGoldenFlakes();
   initNavigation();
+  initScrollOptimization();
   initLineChart();
   initStats();
   initParticleEffects();
@@ -4512,6 +4525,50 @@ function initGoldenFlakes() {
    NAVIGATION & PAGE TRANSITIONS
    ============================================ */
 let isTransitioning = false;
+
+/* ============================================
+   SCROLL PERFORMANCE OPTIMIZATION
+   ============================================ */
+function initScrollOptimization() {
+  let scrollTimeout;
+  let isScrolling = false;
+  
+  window.addEventListener('scroll', () => {
+    if (!isScrolling) {
+      document.body.classList.add('scrolling');
+      isScrolling = true;
+    }
+    
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      document.body.classList.remove('scrolling');
+      isScrolling = false;
+    }, 150); // 滚动停止150ms后恢复动画
+  }, { passive: true });
+  
+  // 触摸滑动优化
+  let touchStartY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  
+  document.addEventListener('touchmove', (e) => {
+    const touchY = e.touches[0].clientY;
+    const diff = Math.abs(touchY - touchStartY);
+    if (diff > 5 && !isScrolling) {
+      document.body.classList.add('scrolling');
+      isScrolling = true;
+    }
+  }, { passive: true });
+  
+  document.addEventListener('touchend', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      document.body.classList.remove('scrolling');
+      isScrolling = false;
+    }, 150);
+  }, { passive: true });
+}
 
 function initNavigation() {
   // 首页单独文件 - 导航暂时禁用
