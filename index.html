@@ -368,6 +368,9 @@ body {
     rgba(8, 6, 4, 1) 50%,
     var(--bg-void) 100%
   );
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Main sun glow - warm and soft */
@@ -375,7 +378,8 @@ body {
   position: absolute;
   top: -40%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(0);
+  -webkit-transform: translateX(-50%) translateZ(0);
   width: 180%;
   height: 90%;
   background: radial-gradient(ellipse 60% 40% at center,
@@ -387,6 +391,7 @@ body {
   );
   filter: blur(40px);
   animation: sunPulse 8s ease-in-out infinite;
+  will-change: opacity, transform;
 }
 
 @keyframes sunPulse {
@@ -425,6 +430,7 @@ body {
   );
   filter: blur(30px);
   animation: beamBreath 10s ease-in-out infinite;
+  will-change: opacity, filter;
 }
 
 .soft-beam.beam-1 {
@@ -487,6 +493,9 @@ body {
   );
   filter: blur(60px);
   animation: hazeShift 12s ease-in-out infinite;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: opacity, transform;
 }
 
 @keyframes hazeShift {
@@ -615,8 +624,10 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(60px);
-  mix-blend-mode: soft-light;
   animation: orbDrift 20s ease-in-out infinite;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform, opacity;
 }
 
 .orb-1 {
